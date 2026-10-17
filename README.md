@@ -95,64 +95,60 @@ Git and GitHub| Version control and collaboration
 The final stack may evolve as the application develops. Technologies will be considered implemented only when they are integrated into the working project.
 
 ---
-
 🏗️ System Architecture
 
-CampusRadar is planned around a modular architecture that separates the presentation layer, application logic, data management, and cloud services.
+CampusRadar follows a modular architecture that connects the Android application with cloud services and opportunity management.
 
 flowchart TB
-    USER(["👤 Student"])
+    A["Student"] --> B["CampusRadar Android App"]
 
-    subgraph ANDROID["📱 CampusRadar Android App"]
-        direction TB
-        UI["Presentation Layer<br/>Jetpack Compose"]
-        VM["ViewModel Layer<br/>UI State and Events"]
-        REPO["Repository Layer<br/>Data Management"]
-
-        UI <--> VM
-        VM <--> REPO
+    subgraph APP["Android Application"]
+        B --> C["Presentation Layer<br/>Jetpack Compose UI"]
+        C --> D["ViewModel Layer<br/>UI State and Logic"]
+        D --> E["Repository Layer<br/>Data Management"]
     end
 
-    subgraph DATA["💾 Data Sources"]
-        LOCAL[("Local Storage<br/>Optional Preferences")]
-        FIRESTORE[("Cloud Firestore<br/>Opportunities and Submissions")]
+    E <--> F[("Firebase Firestore")]
+    E <--> G[("Local Storage")]
+
+    subgraph SERVICES["Backend Services"]
+        F
+        H["Firebase Authentication"]
+        I["Firebase Cloud Messaging"]
+        J["Firestore Security Rules"]
     end
 
-    subgraph FIREBASE["☁️ Firebase Services"]
-        AUTH["Authentication<br/>Optional Sign-in"]
-        RULES["Firestore Security Rules<br/>Access Control"]
-        FCM["Cloud Messaging<br/>Future Notifications"]
+    B -.-> H
+    F -.-> J
+    I -.-> A
+
+    subgraph MODERATION["Opportunity Moderation"]
+        K["Student Submission"] --> L["Review and Verification"]
+        L --> M["Approved Opportunity"]
     end
 
-    subgraph MODERATION["🛡️ Opportunity Moderation"]
-        SUBMIT["Student Submission"]
-        REVIEW["Review and Verification"]
-        APPROVED["Approved Listings"]
+    M --> F
 
-        SUBMIT --> REVIEW
-        REVIEW --> APPROVED
-    end
+    F --> N["Browse Opportunities"]
+    N --> O["Search and Filter"]
+    O --> P["View Details"]
+    P --> Q["Bookmark or Apply"]
 
-    USER <--> UI
-    REPO <--> LOCAL
-    REPO <--> FIRESTORE
-    UI -.-> AUTH
-    FIRESTORE --- RULES
-    APPROVED --> FIRESTORE
-    USER --> SUBMIT
-    FCM -.-> USER
+    classDef default fill:#ffffff,stroke:#333333,color:#111111
+    style APP fill:#f5f5f5,stroke:#555555
+    style SERVICES fill:#fafafa,stroke:#555555
+    style MODERATION fill:#f5f5f5,stroke:#555555
 
-    classDef user fill:#EDE9FE,stroke:#7C3AED,color:#312E81
-    classDef app fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A
-    classDef data fill:#D1FAE5,stroke:#059669,color:#064E3B
-    classDef service fill:#FCE7F3,stroke:#DB2777,color:#831843
-    classDef moderation fill:#FEF3C7,stroke:#D97706,color:#78350F
+Main Components
 
-    class USER user
-    class UI,VM,REPO app
-    class LOCAL,FIRESTORE data
-    class AUTH,RULES,FCM service
-    class SUBMIT,REVIEW,APPROVED moderation
+- Presentation Layer: Displays screens and handles user interactions.
+- ViewModel Layer: Manages UI state and application logic.
+- Repository Layer: Coordinates data access.
+- Firebase Firestore: Stores opportunity information and submissions.
+- Local Storage: Supports selected local preferences or cached data.
+- Opportunity Moderation: Reviews submissions before publication.
+
+Note: This represents the planned architecture. Update it as the application develops.
 
 Architecture Components
 
